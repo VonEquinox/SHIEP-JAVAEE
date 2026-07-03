@@ -1,0 +1,169 @@
+/* =====================================================
+   MD3 设计令牌 —— 完整移植自博客 TrueWebSite 的配色体系
+   全站唯一颜色来源，组件禁止写死色值（需求文档 7.1）
+   ===================================================== */
+:root {
+  --md-sys-color-primary: #0061a4;
+  --md-sys-color-on-primary: #ffffff;
+  --md-sys-color-primary-container: #d1e4ff;
+  --md-sys-color-on-primary-container: #001d36;
+
+  --md-sys-color-secondary: #535f70;
+  --md-sys-color-on-secondary: #ffffff;
+
+  --md-sys-color-surface: #fdfcff;
+  --md-sys-color-on-surface: #1a1c1e;
+  --md-sys-color-surface-variant: #dfe2eb;
+  --md-sys-color-on-surface-variant: #43474e;
+
+  --md-sys-color-background: #fdfcff;
+  --md-sys-color-on-background: #1a1c1e;
+  --md-sys-color-outline: #73777f;
+
+  /* 统一动效参数（需求文档 7.3） */
+  --motion-easing: cubic-bezier(0.22, 1, 0.36, 1);
+  --motion-duration: 400ms;
+
+  /* 平铺描边：outline 色降低不透明度，代替阴影 */
+  --flat-border: 1px solid color-mix(in srgb, var(--md-sys-color-outline) 22%, transparent);
+}
+
+html[data-theme='dark'] {
+  --md-sys-color-primary: #9ecaef;
+  --md-sys-color-on-primary: #003258;
+  --md-sys-color-primary-container: #00497d;
+  --md-sys-color-on-primary-container: #d1e4ff;
+
+  --md-sys-color-secondary: #bbc7db;
+  --md-sys-color-on-secondary: #253140;
+
+  --md-sys-color-surface: #1a1c1e;
+  --md-sys-color-on-surface: #e2e2e6;
+  --md-sys-color-surface-variant: #43474e;
+  --md-sys-color-on-surface-variant: #c3c7cf;
+
+  --md-sys-color-background: #1a1c1e;
+  --md-sys-color-on-background: #e2e2e6;
+  --md-sys-color-outline: #8d9199;
+}
+
+/* 主题切换的圆形扩散由 theme.js 用 View Transition 驱动：
+   关掉默认的交叉淡化，让 ::view-transition-new 的 clip-path 动画独占 */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+/* ---------- Element Plus 主题映射：组件自动继承 MD3 配色 ---------- */
+:root {
+  --el-color-primary: var(--md-sys-color-primary);
+  --el-color-primary-light-3: color-mix(in srgb, var(--md-sys-color-primary) 70%, var(--md-sys-color-background));
+  --el-color-primary-light-5: color-mix(in srgb, var(--md-sys-color-primary) 50%, var(--md-sys-color-background));
+  --el-color-primary-light-7: color-mix(in srgb, var(--md-sys-color-primary) 30%, var(--md-sys-color-background));
+  --el-color-primary-light-8: color-mix(in srgb, var(--md-sys-color-primary) 20%, var(--md-sys-color-background));
+  --el-color-primary-light-9: color-mix(in srgb, var(--md-sys-color-primary) 10%, var(--md-sys-color-background));
+  --el-color-primary-dark-2: color-mix(in srgb, var(--md-sys-color-primary) 85%, black);
+  --el-bg-color: var(--md-sys-color-surface);
+  --el-bg-color-overlay: var(--md-sys-color-surface);
+  --el-text-color-primary: var(--md-sys-color-on-surface);
+  --el-text-color-regular: var(--md-sys-color-on-surface-variant);
+  --el-border-color: color-mix(in srgb, var(--md-sys-color-outline) 35%, transparent);
+  --el-border-color-light: color-mix(in srgb, var(--md-sys-color-outline) 22%, transparent);
+  --el-border-color-lighter: color-mix(in srgb, var(--md-sys-color-outline) 16%, transparent);
+  --el-fill-color-blank: var(--md-sys-color-surface);
+  --el-fill-color-light: color-mix(in srgb, var(--md-sys-color-surface-variant) 40%, transparent);
+  --el-border-radius-base: 12px;
+  --el-border-radius-small: 8px;
+  --el-border-radius-round: 999px;
+  /* 平铺：去掉 Element Plus 的阴影 */
+  --el-box-shadow: none;
+  --el-box-shadow-light: none;
+  --el-box-shadow-lighter: none;
+}
+
+/* ---------- 全局基础 ---------- */
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  /* 防止滚动条出现/消失导致页面横跳（需求文档 7.3） */
+  scrollbar-gutter: stable;
+  scrollbar-width: none;
+}
+
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}
+
+body {
+  margin: 0;
+  background-color: var(--md-sys-color-background);
+  color: var(--md-sys-color-on-background);
+  font-family: system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+/* 页面级大标题：clamp 流式字号 + 0.96 行高 + 负字距（博客 hero 同款） */
+.page-hero h1 {
+  margin: 0;
+  font-size: clamp(2rem, 5vw, 3.6rem);
+  line-height: 0.96;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+
+.page-hero h1 span {
+  color: var(--md-sys-color-primary);
+}
+
+.page-hero p {
+  margin: 1.2rem 0 0;
+  max-width: 52ch;
+  color: var(--md-sys-color-on-surface-variant);
+  font-size: 1.06rem;
+  line-height: 1.72;
+}
+
+/* 平铺卡片：无阴影、半透明描边、26px 大圆角（博客 post-card 同款） */
+.flat-card {
+  border-radius: 26px;
+  border: var(--flat-border);
+  background: color-mix(in srgb, var(--md-sys-color-surface) 95%, transparent);
+  overflow: clip;
+}
+
+/* 胶囊标签（博客 tag 同款） */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap;
+  height: 2.05rem;
+  padding: 0 0.95rem;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--md-sys-color-outline) 20%, transparent);
+  color: var(--md-sys-color-secondary);
+  font-size: 0.82rem;
+  font-weight: 600;
+  background: color-mix(in srgb, var(--md-sys-color-background) 90%, transparent);
+}
+
+/* 次要文字 */
+.muted {
+  color: var(--md-sys-color-on-surface-variant);
+}
+
+/* 动效可关闭（prefers-reduced-motion） */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

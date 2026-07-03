@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hotel.hotel.mapper.HotelMapper">
+
+    <!-- 酒店搜索：城市/区域/酒店名/价格范围 任意组合，
+         附带最低房价与平均评分；命中 idx_hotel_city_district 索引 -->
+    <select id="search" resultType="com.hotel.hotel.entity.Hotel">
+        SELECT h.*,
+               MIN(rt.price) AS min_price,
+               (SELECT ROUND(AVG(r.score), 1)
+                FROM t_review r
+                         JOIN t_order o ON o.order_id = r.order_id
+                WHERE o.hotel_id = h.hotel_id) AS avg_score
+        FROM t_hotel h
+                 JOIN t_room_type rt ON rt.hotel_id = h.hotel_id
+        <where>
+            <if test="city != null and city != ''">AND h.city = #{city}</if>
+            <if test="district != null and district != ''">AND h.district = #{district}</if>
+            <if test="name != null and name != ''">AND h.hotel_name LIKE CONCAT('%', #{name}, '%')</if>
+            <if test="priceMin != null">AND rt.price &gt;= #{priceMin}</if>
+            <if test="priceMax != null">AND rt.price &lt;= #{priceMax}</if>
+        </where>
+        GROUP BY h.hotel_id
+        ORDER BY h.star DESC, min_price
+    </select>
+</mapper>

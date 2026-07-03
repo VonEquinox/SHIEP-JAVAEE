@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hotel.order.mapper.StatsMapper">
+
+    <!-- 按城市/区域/酒店/价格区间统计预订情况 -->
+    <select id="bookingStats" statementType="CALLABLE" resultType="map">
+        {CALL sp_booking_stats(
+                #{start, mode=IN, jdbcType=DATE},
+                #{end, mode=IN, jdbcType=DATE},
+                #{grp, mode=IN, jdbcType=VARCHAR})}
+    </select>
+
+    <!-- 按入住人画像统计预订偏好 -->
+    <select id="guestStats" statementType="CALLABLE" resultType="map">
+        {CALL sp_guest_stats(
+                #{start, mode=IN, jdbcType=DATE},
+                #{end, mode=IN, jdbcType=DATE},
+                #{dim, mode=IN, jdbcType=VARCHAR})}
+    </select>
+
+    <!-- 各类客房入住率 -->
+    <select id="occupancy" statementType="CALLABLE" resultType="map">
+        {CALL sp_occupancy_rate(
+                #{start, mode=IN, jdbcType=DATE},
+                #{end, mode=IN, jdbcType=DATE})}
+    </select>
+</mapper>

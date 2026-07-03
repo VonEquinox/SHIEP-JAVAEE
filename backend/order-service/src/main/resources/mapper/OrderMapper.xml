@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hotel.order.mapper.OrderMapper">
+
+    <!-- 调用存储过程：按用户查询其所有订单 -->
+    <select id="callUserOrders" statementType="CALLABLE"
+            resultType="com.hotel.order.entity.OrderListItem">
+        {CALL sp_user_orders(#{userId, mode=IN, jdbcType=INTEGER})}
+    </select>
+
+    <select id="adminList" resultType="com.hotel.order.entity.OrderListItem">
+        SELECT o.order_id, o.order_no, u.username, h.hotel_name, h.city, h.district,
+               o.check_in_date, o.check_out_date, o.total_price, o.pay_price,
+               o.status, o.created_at
+        FROM t_order o
+                 JOIN t_user u ON u.user_id = o.user_id
+                 JOIN t_hotel h ON h.hotel_id = o.hotel_id
+        <where>
+            <if test="status != null and status != ''">o.status = #{status}</if>
+        </where>
+        ORDER BY o.created_at DESC
+    </select>
+</mapper>
