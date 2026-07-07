@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="620" viewBox="0 0 1200 620">
+<style>text{font-family:"Songti SC","SimSun","PingFang SC",serif;fill:#000;font-size:24px}.small{font-size:19px}.box{fill:#fff;stroke:#000;stroke-width:3}.rel{stroke:#000;stroke-width:3;fill:none}</style>
+<text x="600" y="45" text-anchor="middle" font-weight="700">核心业务 ER 关系图</text>
+<rect class="box" x="70" y="110" width="230" height="150"/><text x="185" y="145" text-anchor="middle" font-weight="700">t_user 用户</text><text class="small" x="95" y="185">user_id PK</text><text class="small" x="95" y="220">username / role</text>
+<rect class="box" x="470" y="105" width="260" height="165"/><text x="600" y="140" text-anchor="middle" font-weight="700">t_order 订单</text><text class="small" x="500" y="180">order_id PK</text><text class="small" x="500" y="215">user_id / hotel_id FK</text><text class="small" x="500" y="250">status / pay_price</text>
+<rect class="box" x="900" y="110" width="230" height="150"/><text x="1015" y="145" text-anchor="middle" font-weight="700">t_hotel 酒店</text><text class="small" x="925" y="185">hotel_id PK</text><text class="small" x="925" y="220">city / district</text>
+<rect class="box" x="900" y="380" width="230" height="155"/><text x="1015" y="415" text-anchor="middle" font-weight="700">t_room_type 房型</text><text class="small" x="925" y="455">room_type_id PK</text><text class="small" x="925" y="490">hotel_id FK / price</text>
+<rect class="box" x="470" y="380" width="260" height="155"/><text x="600" y="415" text-anchor="middle" font-weight="700">t_order_item 明细</text><text class="small" x="500" y="455">order_item_id PK</text><text class="small" x="500" y="490">order_id / room_type_id</text>
+<rect class="box" x="70" y="380" width="230" height="155"/><text x="185" y="415" text-anchor="middle" font-weight="700">t_guest 入住人</text><text class="small" x="95" y="455">guest_id PK</text><text class="small" x="95" y="490">user_id FK</text>
+<path class="rel" d="M300 185 H470"/><text class="small" x="385" y="170" text-anchor="middle">1 对多</text>
+<path class="rel" d="M730 185 H900"/><text class="small" x="815" y="170" text-anchor="middle">多对 1</text>
+<path class="rel" d="M1015 260 V380"/><text class="small" x="1045" y="325">1 对多</text>
+<path class="rel" d="M600 270 V380"/><text class="small" x="630" y="330">1 对多</text>
+<path class="rel" d="M730 457 H900"/><text class="small" x="815" y="442" text-anchor="middle">多对 1</text>
+<path class="rel" d="M300 457 H470"/><text class="small" x="385" y="442" text-anchor="middle">用户维护</text>
+</svg>

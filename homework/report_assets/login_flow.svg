@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="520" viewBox="0 0 1200 520">
+<defs><marker id="arrow" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"><path d="M0,0 L10,4 L0,8 Z" fill="#000"/></marker></defs>
+<style>text{font-family:"Songti SC","SimSun","PingFang SC",serif;fill:#000;font-size:23px}.small{font-size:18px}.box{fill:#fff;stroke:#000;stroke-width:3}.line{stroke:#000;stroke-width:3;fill:none;marker-end:url(#arrow)}</style>
+<text x="600" y="45" text-anchor="middle" font-weight="700">登录认证与角色菜单流程图</text>
+<rect class="box" x="70" y="140" width="180" height="95"/><text x="160" y="180" text-anchor="middle">填写账号密码</text><text class="small" x="160" y="210" text-anchor="middle">前端表单校验</text>
+<rect class="box" x="330" y="140" width="190" height="95"/><text x="425" y="180" text-anchor="middle">提交登录接口</text><text class="small" x="425" y="210" text-anchor="middle">/api/user/login</text>
+<rect class="box" x="600" y="140" width="205" height="95"/><text x="702" y="180" text-anchor="middle">BCrypt 校验</text><text class="small" x="702" y="210" text-anchor="middle">matches 明文与密文</text>
+<rect class="box" x="890" y="140" width="210" height="95"/><text x="995" y="180" text-anchor="middle">签发 token</text><text class="small" x="995" y="210" text-anchor="middle">userId:role Base64</text>
+<rect class="box" x="335" y="335" width="210" height="95"/><text x="440" y="375" text-anchor="middle">请求携带 token</text><text class="small" x="440" y="405" text-anchor="middle">Authorization 请求头</text>
+<rect class="box" x="625" y="335" width="210" height="95"/><text x="730" y="375" text-anchor="middle">过滤器解析角色</text><text class="small" x="730" y="405" text-anchor="middle">注入用户编号与角色</text>
+<rect class="box" x="905" y="335" width="210" height="95"/><text x="1010" y="375" text-anchor="middle">菜单权限控制</text><text class="small" x="1010" y="405" text-anchor="middle">用户 / 管理员菜单</text>
+<path class="line" d="M250 188 H325"/><path class="line" d="M520 188 H595"/><path class="line" d="M805 188 H885"/><path class="line" d="M995 235 V285 H440 V330"/><path class="line" d="M545 383 H620"/><path class="line" d="M835 383 H900"/>
+</svg>

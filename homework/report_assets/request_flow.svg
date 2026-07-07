@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="520" viewBox="0 0 1200 520">
+<defs><marker id="arrow" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"><path d="M0,0 L10,4 L0,8 Z" fill="#000"/></marker></defs>
+<style>text{font-family:"Songti SC","SimSun","PingFang SC",serif;fill:#000;font-size:23px}.small{font-size:18px}.box{fill:#fff;stroke:#000;stroke-width:3}.line{stroke:#000;stroke-width:3;fill:none;marker-end:url(#arrow)}</style>
+<text x="600" y="45" text-anchor="middle" font-weight="700">前后端接口调用流程图</text>
+<rect class="box" x="70" y="135" width="190" height="105"/><text x="165" y="178" text-anchor="middle">Vue 页面</text><text class="small" x="165" y="210" text-anchor="middle">表单校验 / 操作</text>
+<rect class="box" x="330" y="135" width="190" height="105"/><text x="425" y="178" text-anchor="middle">Axios 实例</text><text class="small" x="425" y="210" text-anchor="middle">携带 token</text>
+<rect class="box" x="595" y="135" width="190" height="105"/><text x="690" y="178" text-anchor="middle">AuthFilter</text><text class="small" x="690" y="210" text-anchor="middle">解析身份头</text>
+<rect class="box" x="860" y="135" width="210" height="105"/><text x="965" y="178" text-anchor="middle">Controller</text><text class="small" x="965" y="210" text-anchor="middle">接收参数</text>
+<rect class="box" x="310" y="340" width="230" height="105"/><text x="425" y="383" text-anchor="middle">Service</text><text class="small" x="425" y="415" text-anchor="middle">业务校验 / 事务</text>
+<rect class="box" x="665" y="340" width="230" height="105"/><text x="780" y="383" text-anchor="middle">Mapper / MySQL</text><text class="small" x="780" y="415" text-anchor="middle">参数绑定 / 返回结果</text>
+<path class="line" d="M260 188 H325"/><path class="line" d="M520 188 H590"/><path class="line" d="M785 188 H855"/><path class="line" d="M965 240 V292 H425 V335"/><path class="line" d="M540 392 H660"/><path class="line" d="M665 410 H545"/><path class="line" d="M310 392 H170 V245"/>
+</svg>

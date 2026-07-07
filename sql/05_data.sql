@@ -5,12 +5,12 @@
 -- =====================================================
 USE hotel_booking;
 
--- 用户（演示项目，密码明文存储：均为 123456）
+-- 用户（密码使用 BCrypt 加密，明文均为 123456）
 INSERT INTO t_user (username, password, phone, id_card, points, level, role) VALUES
-('admin',    '123456', '13800000000', '110101198001011234', 0,    '普通', '管理员'),
-('zhangsan', '123456', '13811112222', '110101199805123456', 300,  '普通', '用户'),
-('lisi',     '123456', '13833334444', '310101198503154321', 1500, 'VIP',  '用户'),
-('wangwu',   '123456', '13855556666', '440101197011021111', 6000, 'SVIP', '用户');
+('admin',    '$2y$10$Euev4QQqIRknch6rq7StG.2OHqBtknIs7LuZvVkkTIi2bR3F7eGQq', '13800000000', '110101198001011234', 0,    '普通', '管理员'),
+('zhangsan', '$2y$10$ej6usFfvIcRJbrh1UDM..emeAR8DE55B4impWuKULU03KqgXRA2ge', '13811112222', '110101199805123456', 300,  '普通', '用户'),
+('lisi',     '$2y$10$wmE3pwLCnea5UuG5Jna2ZOwr3dWq/bEIxnVnSo0XFxcQR.U2t2wFm', '13833334444', '310101198503154321', 1500, 'VIP',  '用户'),
+('wangwu',   '$2y$10$7/HgPVlAgr3eK4o54ek5ousNYeZZRIVg07mJKu62GcrtjWGgvVV8K', '13855556666', '440101197011021111', 6000, 'SVIP', '用户');
 
 -- 常用入住人（画像字段供统计用）
 INSERT INTO t_guest (user_id, name, id_card, gender, birth_date, occupation, education, income_level) VALUES

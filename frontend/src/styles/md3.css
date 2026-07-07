@@ -76,6 +76,8 @@ html[data-theme='dark'] {
   --el-border-radius-base: 12px;
   --el-border-radius-small: 8px;
   --el-border-radius-round: 999px;
+  /* 控件统一高度：与 FlatSelect/FlatDateRange 的 2.4rem 字段一致 */
+  --el-component-size: 2.4rem;
   /* 平铺：去掉 Element Plus 的阴影 */
   --el-box-shadow: none;
   --el-box-shadow-light: none;
@@ -126,7 +128,8 @@ body {
 
 .page-hero p {
   margin: 1.2rem 0 0;
-  max-width: 52ch;
+  /* ch 以“0”字宽计，中文一字约 2ch：52ch 会让描述过早换行，放宽到约 60 个汉字 */
+  max-width: 120ch;
   color: var(--md-sys-color-on-surface-variant);
   font-size: 1.06rem;
   line-height: 1.72;

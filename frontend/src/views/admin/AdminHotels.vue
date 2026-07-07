@@ -2,13 +2,14 @@
 // 后台：酒店与房型维护（客房情况维护，需求文档 3.7）
 import { onMounted, ref } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
-import { deleteRoomType, getHotelRooms, saveHotel, saveRoomType, searchHotels } from '../../api/hotel';
+import { deleteHotel, deleteRoomType, deleteRoomTypes, getHotelRooms, saveHotel, saveRoomType, searchHotels } from '../../api/hotel';
 
 const hotels = ref([]);
 const current = ref(null);     // 正在编辑房型的酒店
 const rooms = ref([]);
 const hotelForm = ref(null);   // 酒店编辑表单（null = 收起）
 const roomForm = ref(null);    // 房型编辑表单
+const selectedRooms = ref([]);
 
 const emptyHotel = { hotelName: '', city: '', district: '', address: '', star: 3, phone: '' };
 const emptyRoom = { typeName: '', price: 0, capacity: 2, totalCount: 1 };
@@ -31,6 +32,13 @@ async function submitHotel() {
   await load();
 }
 
+async function removeHotel(h) {
+  await ElMessageBox.confirm(`确定删除酒店「${h.hotelName}」吗？`, '删除确认');
+  await deleteHotel(h.hotelId);
+  ElMessage.success('已删除');
+  await load();
+}
+
 async function submitRoom() {
   const f = roomForm.value;
   if (!f.typeName) return ElMessage.warning('房型名必填');
@@ -44,6 +52,15 @@ async function removeRoom(r) {
   await ElMessageBox.confirm(`确定删除房型「${r.typeName}」吗？`, '删除确认');
   await deleteRoomType(r.roomTypeId);
   ElMessage.success('已删除');
+  await openRooms(current.value);
+}
+
+async function removeSelectedRooms() {
+  if (!selectedRooms.value.length) return ElMessage.warning('请先选择房型');
+  await ElMessageBox.confirm(`确定删除选中的 ${selectedRooms.value.length} 个房型吗？`, '批量删除确认');
+  await deleteRoomTypes(selectedRooms.value.map((r) => r.roomTypeId));
+  selectedRooms.value = [];
+  ElMessage.success('已批量删除');
   await openRooms(current.value);
 }
 
@@ -81,10 +98,11 @@ onMounted(load);
       <el-table-column prop="district" label="区域" width="100" />
       <el-table-column prop="star" label="星级" width="70" />
       <el-table-column prop="minPrice" label="最低价" width="90" />
-      <el-table-column label="操作" width="180">
+      <el-table-column label="操作" width="220">
         <template #default="{ row }">
           <el-button text size="small" @click="hotelForm = { ...row }">编辑</el-button>
           <el-button text type="primary" size="small" @click="openRooms(row)">房型维护</el-button>
+          <el-button text type="danger" size="small" @click="removeHotel(row)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -93,7 +111,12 @@ onMounted(load);
     <el-drawer :model-value="!!current" :title="current?.hotelName + ' · 房型维护'"
                size="46%" @close="current = null; roomForm = null">
       <div class="drawer-body">
-        <el-button type="primary" round size="small" @click="roomForm = { ...emptyRoom }">+ 新增房型</el-button>
+        <div class="room-actions">
+          <el-button type="primary" round size="small" @click="roomForm = { ...emptyRoom }">+ 新增房型</el-button>
+          <el-button round size="small" :disabled="!selectedRooms.length" @click="removeSelectedRooms">
+            批量删除
+          </el-button>
+        </div>
 
         <el-collapse-transition>
           <div v-if="roomForm" class="flat-card form">
@@ -108,7 +131,8 @@ onMounted(load);
           </div>
         </el-collapse-transition>
 
-        <el-table :data="rooms">
+        <el-table :data="rooms" @selection-change="selectedRooms = $event">
+          <el-table-column type="selection" width="42" />
           <el-table-column prop="typeName" label="房型" />
           <el-table-column prop="price" label="价格" width="90" />
           <el-table-column prop="capacity" label="可住" width="70" />
@@ -177,5 +201,11 @@ onMounted(load);
 
 .drawer-body .el-table {
   width: 100%;
+}
+
+.room-actions {
+  display: flex;
+  gap: 0.6rem;
+  flex-wrap: wrap;
 }
 </style>

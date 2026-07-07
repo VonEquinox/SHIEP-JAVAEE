@@ -141,7 +141,8 @@ onMounted(load);
   display: flex;
   flex-direction: column;
   gap: 1.8rem;
-  overflow-x: clip;
+  /* 不在此处裁剪：横向裁剪交给全视口宽的 .app-shell，
+     列表才是从屏幕边缘滑入/滑出，而不是在内容区边界处凭空出现 */
 }
 
 /* 状态页签：胶囊组，与整体平铺风格一致 */
@@ -198,20 +199,21 @@ onMounted(load);
   right: 0;
 }
 
+/* 位移用 100vw：无论内容列多窄，都是真正从屏幕边缘外滑入/滑出屏幕边缘外 */
 .list-left-enter-from {
-  transform: translateX(calc(100% + 4rem));
+  transform: translateX(100vw);
 }
 
 .list-left-leave-to {
-  transform: translateX(calc(-100% - 4rem));
+  transform: translateX(-100vw);
 }
 
 .list-right-enter-from {
-  transform: translateX(calc(-100% - 4rem));
+  transform: translateX(-100vw);
 }
 
 .list-right-leave-to {
-  transform: translateX(calc(100% + 4rem));
+  transform: translateX(100vw);
 }
 
 .order-card {

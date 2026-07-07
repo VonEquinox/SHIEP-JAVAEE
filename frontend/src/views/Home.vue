@@ -8,6 +8,7 @@ import FlatDateRange from '../components/FlatDateRange.vue';
 
 const cities = ref({});
 const hotels = ref([]);
+const searchSeq = ref(0); // 每次搜索自增，驱动结果网格的离场/入场过渡
 const query = ref({ city: '', district: '', name: '', price: [0, 3000], dates: null });
 const { expandedId, expand, collapse } = useCardExpand();
 
@@ -23,6 +24,7 @@ async function search() {
     priceMin,
     priceMax,
   });
+  searchSeq.value += 1;
 }
 
 onMounted(async () => {
@@ -55,20 +57,26 @@ onMounted(async () => {
       </div>
     </div>
 
-    <!-- 酒店卡片网格：点击原地展开为详情（博客 post-grid 同款交互） -->
-    <div class="hotel-grid" data-expand-grid>
-      <HotelCard
-        v-for="h in hotels"
-        :key="h.hotelId"
-        :hotel="h"
-        :dates="query.dates"
-        :expanded="expandedId === h.hotelId"
-        @open="expand(h.hotelId, $event)"
-        @close="collapse"
-      />
+    <!-- 酒店卡片网格：点击原地展开为详情（博客 post-grid 同款交互）。
+         搜索结果变化时旧网格下沉淡出、新网格上浮淡入（有迹可循，不许突变） -->
+    <div class="result-stage">
+      <transition name="result">
+        <div :key="searchSeq" class="result-slot">
+          <div class="hotel-grid" data-expand-grid>
+            <HotelCard
+              v-for="h in hotels"
+              :key="h.hotelId"
+              :hotel="h"
+              :dates="query.dates"
+              :expanded="expandedId === h.hotelId"
+              @open="expand(h.hotelId, $event)"
+              @close="collapse"
+            />
+          </div>
+          <el-empty v-if="!hotels.length" description="没有符合条件的酒店" />
+        </div>
+      </transition>
     </div>
-
-    <el-empty v-if="!hotels.length" description="没有符合条件的酒店" />
   </div>
 </template>
 
@@ -97,6 +105,13 @@ onMounted(async () => {
   }
 }
 
+/* 酒店名输入框：与 FlatSelect/FlatDateRange 字段同高同形（2.4rem 胶囊） */
+.f-name :deep(.el-input__wrapper) {
+  height: 2.4rem;
+  border-radius: 999px;
+  padding: 0 0.9rem;
+}
+
 .price-filter {
   display: flex;
   align-items: center;
@@ -112,6 +127,33 @@ onMounted(async () => {
 
 .price-filter .muted {
   white-space: nowrap;
+}
+
+/* 搜索结果转场舞台：离场网格绝对定位叠在原位，与入场网格交叉过渡 */
+.result-stage {
+  position: relative;
+}
+
+.result-enter-active,
+.result-leave-active {
+  transition: transform 0.4s var(--motion-easing), opacity 0.4s var(--motion-easing);
+}
+
+.result-leave-active {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+}
+
+.result-enter-from {
+  opacity: 0;
+  transform: translateY(24px);
+}
+
+.result-leave-to {
+  opacity: 0;
+  transform: translateY(-24px);
 }
 
 .hotel-grid {

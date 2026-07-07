@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watch } from 'vue';
+import { nextTick, onMounted, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { auth, isAdmin, logout } from './store/auth';
 import { theme, toggleTheme } from './store/theme';
@@ -32,6 +32,50 @@ watch(
   },
 );
 
+/**
+ * 导航下划线（墨条）：单独一条线在链接间连续移动。
+ * 两阶段：先“拉过去”（伸长到同时覆盖新旧两个链接），再“变短”（收缩到新链接）。
+ */
+const navEl = ref(null);
+const ink = ref({ left: 0, width: 0, visible: false });
+let inkTimer = null;
+
+function moveInk() {
+  const nav = navEl.value;
+  if (!nav) return;
+  const active = nav.querySelector('a.router-link-active');
+  if (!active) {
+    ink.value = { ...ink.value, visible: false };
+    return;
+  }
+  const navRect = nav.getBoundingClientRect();
+  const rect = active.getBoundingClientRect();
+  const target = { left: rect.left - navRect.left, width: rect.width, visible: true };
+  clearTimeout(inkTimer);
+  // 首次出现（或从无到有）：直接就位，不做拉伸
+  if (!ink.value.visible) {
+    ink.value = target;
+    return;
+  }
+  // 阶段一：伸长，右端（或左端）先“拉”到目标位置
+  const left = Math.min(ink.value.left, target.left);
+  const right = Math.max(ink.value.left + ink.value.width, target.left + target.width);
+  ink.value = { left, width: right - left, visible: true };
+  // 阶段二：另一端跟上，收缩为目标宽度
+  inkTimer = setTimeout(() => {
+    ink.value = target;
+  }, 240);
+}
+
+onMounted(moveInk);
+watch(
+  () => route.path,
+  async () => {
+    await nextTick();
+    moveInk();
+  },
+);
+
 function onLogout() {
   logout();
   router.push('/login');
@@ -42,11 +86,19 @@ function onLogout() {
   <div class="app-shell">
     <header class="app-header" data-site-header data-push-away>
       <router-link to="/" class="brand">易宿<span>Stay</span></router-link>
-      <nav class="nav">
+      <nav ref="navEl" class="nav">
         <router-link to="/">找酒店</router-link>
         <router-link v-if="auth.token" to="/orders">我的订单</router-link>
         <router-link v-if="auth.token" to="/profile">个人中心</router-link>
         <router-link v-if="isAdmin()" to="/admin">后台管理</router-link>
+        <span
+          class="nav-ink"
+          :style="{
+            left: `${ink.left}px`,
+            width: `${ink.width}px`,
+            opacity: ink.visible ? 1 : 0,
+          }"
+        />
       </nav>
       <div class="who">
         <button class="theme-btn" :title="theme.mode === 'dark' ? '切换到浅色' : '切换到深色'"
@@ -72,7 +124,7 @@ function onLogout() {
     </main>
 
     <footer class="app-footer" data-site-footer>
-      © {{ new Date().getFullYear() }} 易宿 · JavaEE 课程设计 · Nacos 微服务版
+      © {{ new Date().getFullYear() }} 易宿 · JavaEE 课程设计 · 单体 Spring Boot 版
     </footer>
   </div>
 </template>
@@ -109,6 +161,7 @@ function onLogout() {
 }
 
 .nav {
+  position: relative;
   display: flex;
   gap: 1.4rem;
   flex: 1;
@@ -120,13 +173,25 @@ function onLogout() {
   font-size: 0.98rem;
   font-weight: 500;
   padding: 0.35rem 0;
-  border-bottom: 2px solid transparent;
   transition: color var(--motion-duration) var(--motion-easing);
 }
 
 .nav a.router-link-active {
   color: var(--md-sys-color-primary);
-  border-bottom-color: var(--md-sys-color-primary);
+}
+
+/* 墨条：唯一一条下划线，在链接之间“先拉长、再收短”地连续移动 */
+.nav-ink {
+  position: absolute;
+  bottom: 0;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--md-sys-color-primary);
+  transition:
+    left 0.24s var(--motion-easing),
+    width 0.24s var(--motion-easing),
+    opacity 0.24s var(--motion-easing);
+  pointer-events: none;
 }
 
 .who {
@@ -199,21 +264,21 @@ function onLogout() {
   right: 0;
 }
 
-/* 水平：左中右关系 */
+/* 水平：左中右关系。位移用 100vw，保证页面完整移出真实屏幕边缘后才被回收 */
 .slide-left-enter-from {
-  transform: translateX(calc(100% + 4rem));
+  transform: translateX(100vw);
 }
 
 .slide-left-leave-to {
-  transform: translateX(calc(-100% - 4rem));
+  transform: translateX(-100vw);
 }
 
 .slide-right-enter-from {
-  transform: translateX(calc(-100% - 4rem));
+  transform: translateX(-100vw);
 }
 
 .slide-right-leave-to {
-  transform: translateX(calc(100% + 4rem));
+  transform: translateX(100vw);
 }
 
 /* 垂直：登录页与“埋伏”在下方的业务页 */

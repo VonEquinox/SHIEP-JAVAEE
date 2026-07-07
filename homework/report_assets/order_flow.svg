@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="560" viewBox="0 0 1200 560">
+<defs><marker id="arrow" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"><path d="M0,0 L10,4 L0,8 Z" fill="#000"/></marker></defs>
+<style>text{font-family:"Songti SC","SimSun","PingFang SC",serif;fill:#000;font-size:23px}.small{font-size:18px}.box{fill:#fff;stroke:#000;stroke-width:3}.line{stroke:#000;stroke-width:3;fill:none;marker-end:url(#arrow)}</style>
+<text x="600" y="45" text-anchor="middle" font-weight="700">客房预订业务流程图</text>
+<rect class="box" x="65" y="120" width="185" height="95"/><text x="158" y="160" text-anchor="middle">选择酒店房型</text><text class="small" x="158" y="190" text-anchor="middle">日期 / 入住人</text>
+<rect class="box" x="315" y="120" width="190" height="95"/><text x="410" y="160" text-anchor="middle">提交订单</text><text class="small" x="410" y="190" text-anchor="middle">CreateOrderDTO</text>
+<rect class="box" x="575" y="120" width="210" height="95"/><text x="680" y="160" text-anchor="middle">校验业务规则</text><text class="small" x="680" y="190" text-anchor="middle">日期 / 容量 / 库存</text>
+<rect class="box" x="855" y="120" width="215" height="95"/><text x="962" y="160" text-anchor="middle">计算价格</text><text class="small" x="962" y="190" text-anchor="middle">天数 / 会员折扣</text>
+<rect class="box" x="315" y="350" width="210" height="95"/><text x="420" y="390" text-anchor="middle">写入订单</text><text class="small" x="420" y="420" text-anchor="middle">t_order</text>
+<rect class="box" x="635" y="350" width="210" height="95"/><text x="740" y="390" text-anchor="middle">写入明细</text><text class="small" x="740" y="420" text-anchor="middle">t_order_item</text>
+<rect class="box" x="930" y="350" width="210" height="95"/><text x="1035" y="390" text-anchor="middle">扣减库存</text><text class="small" x="1035" y="420" text-anchor="middle">触发器维护</text>
+<path class="line" d="M250 168 H310"/><path class="line" d="M505 168 H570"/><path class="line" d="M785 168 H850"/><path class="line" d="M962 215 V290 H420 V345"/><path class="line" d="M525 398 H630"/><path class="line" d="M845 398 H925"/>
+</svg>

@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="560" viewBox="0 0 1200 560">
+	<defs><marker id="arrow" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"><path d="M0,0 L10,4 L0,8 Z" fill="#000"/></marker></defs>
+	<style>text{font-family:"Songti SC","SimSun","PingFang SC",serif;fill:#000;font-size:23px}.small{font-size:18px}.box{fill:#fff;stroke:#000;stroke-width:3}.line{stroke:#000;stroke-width:3;fill:none;marker-end:url(#arrow)}</style>
+	<text x="600" y="45" text-anchor="middle" font-weight="700">用户与管理员二级菜单结构图</text>
+	<rect class="box" x="480" y="90" width="240" height="75"/><text x="600" y="135" text-anchor="middle">登录成功</text>
+	<rect class="box" x="185" y="230" width="250" height="90"/><text x="310" y="265" text-anchor="middle">普通用户菜单</text><text class="small" x="310" y="295" text-anchor="middle">首页 / 酒店 / 订单 / 个人中心</text>
+	<rect class="box" x="765" y="230" width="250" height="90"/><text x="890" y="265" text-anchor="middle">管理员菜单</text><text class="small" x="890" y="295" text-anchor="middle">后台管理 / 统计报表</text>
+	<rect class="box" x="80" y="395" width="170" height="80"/><text class="small" x="165" y="430" text-anchor="middle">酒店搜索</text><text class="small" x="165" y="455" text-anchor="middle">多条件查询</text>
+	<rect class="box" x="275" y="395" width="170" height="80"/><text class="small" x="360" y="430" text-anchor="middle">我的订单</text><text class="small" x="360" y="455" text-anchor="middle">退订 / 评价</text>
+	<rect class="box" x="470" y="395" width="170" height="80"/><text class="small" x="555" y="430" text-anchor="middle">个人中心</text><text class="small" x="555" y="455" text-anchor="middle">入住人维护</text>
+	<rect class="box" x="665" y="395" width="170" height="80"/><text class="small" x="750" y="430" text-anchor="middle">酒店房型</text><text class="small" x="750" y="455" text-anchor="middle">增删改查</text>
+	<rect class="box" x="860" y="395" width="170" height="80"/><text class="small" x="945" y="430" text-anchor="middle">订单管理</text><text class="small" x="945" y="455" text-anchor="middle">状态流转</text>
+	<rect class="box" x="1055" y="395" width="120" height="80"/><text class="small" x="1115" y="430" text-anchor="middle">统计</text><text class="small" x="1115" y="455" text-anchor="middle">报表</text>
+	<path class="line" d="M555 165 L330 225"/><path class="line" d="M645 165 L870 225"/>
+	<path class="line" d="M310 320 L165 390"/><path class="line" d="M310 320 L360 390"/><path class="line" d="M310 320 L555 390"/>
+	<path class="line" d="M890 320 L750 390"/><path class="line" d="M890 320 L945 390"/><path class="line" d="M890 320 L1115 390"/>
+	</svg>
