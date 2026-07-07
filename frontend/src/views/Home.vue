@@ -2,29 +2,49 @@
 import { computed, onMounted, ref } from 'vue';
 import { getCities, searchHotels } from '../api/hotel';
 import { useCardExpand } from '../composables/useCardExpand';
+import { useGridFilterAnimation } from '../composables/useGridFilterAnimation';
 import HotelCard from '../components/HotelCard.vue';
 import FlatSelect from '../components/FlatSelect.vue';
 import FlatDateRange from '../components/FlatDateRange.vue';
 
 const cities = ref({});
 const hotels = ref([]);
-const searchSeq = ref(0); // 每次搜索自增，驱动结果网格的离场/入场过渡
 const query = ref({ city: '', district: '', name: '', price: [0, 3000], dates: null });
-const { expandedId, expand, collapse } = useCardExpand();
+const gridRef = ref(null);
+const stageRef = ref(null);
+const searching = ref(false);
+const filterAnimating = ref(false);
+const requestSeq = ref(0);
+const { expandedId, animating: expandAnimating, expand, collapse } = useCardExpand();
+const { animateTo } = useGridFilterAnimation({ hotels, gridRef, stageRef, filterAnimating });
 
 const cityOptions = computed(() => Object.keys(cities.value));
 const districtOptions = computed(() => cities.value[query.value.city] || []);
 
 async function search() {
+  if (searching.value || filterAnimating.value || expandAnimating.value) return;
+
+  if (expandedId.value !== null) {
+    await collapse();
+  }
+
+  const seq = ++requestSeq.value;
+  searching.value = true;
   const [priceMin, priceMax] = query.value.price;
-  hotels.value = await searchHotels({
-    city: query.value.city || undefined,
-    district: query.value.district || undefined,
-    name: query.value.name || undefined,
-    priceMin,
-    priceMax,
-  });
-  searchSeq.value += 1;
+
+  try {
+    const nextHotels = await searchHotels({
+      city: query.value.city || undefined,
+      district: query.value.district || undefined,
+      name: query.value.name || undefined,
+      priceMin,
+      priceMax,
+    });
+    if (seq !== requestSeq.value) return;
+    await animateTo(nextHotels);
+  } finally {
+    if (seq === requestSeq.value) searching.value = false;
+  }
 }
 
 onMounted(async () => {
@@ -53,29 +73,39 @@ onMounted(async () => {
           <el-slider v-model="query.price" range :max="3000" :step="50" />
         </div>
         <FlatDateRange v-model="query.dates" class="f-dates" />
-        <el-button type="primary" round @click="search">搜索</el-button>
+        <el-button
+          type="primary"
+          round
+          :loading="searching"
+          :disabled="filterAnimating || expandAnimating"
+          @click="search"
+        >搜索</el-button>
       </div>
     </div>
 
-    <!-- 酒店卡片网格：点击原地展开为详情（博客 post-grid 同款交互）。
-         搜索结果变化时旧网格下沉淡出、新网格上浮淡入（有迹可循，不许突变） -->
-    <div class="result-stage">
-      <transition name="result">
-        <div :key="searchSeq" class="result-slot">
-          <div class="hotel-grid" data-expand-grid>
-            <HotelCard
-              v-for="h in hotels"
-              :key="h.hotelId"
-              :hotel="h"
-              :dates="query.dates"
-              :expanded="expandedId === h.hotelId"
-              @open="expand(h.hotelId, $event)"
-              @close="collapse"
-            />
-          </div>
-          <el-empty v-if="!hotels.length" description="没有符合条件的酒店" />
+    <!-- 酒店卡片网格：搜索后使用离散格子路径生成“华容道式”过滤动画，
+         命中卡片紧凑补位，未命中卡片滑出矩阵后消失 -->
+    <div ref="stageRef" class="result-stage" :aria-busy="searching || filterAnimating">
+      <div class="result-slot">
+        <div
+          ref="gridRef"
+          class="hotel-grid"
+          :class="{ 'is-filtering': filterAnimating }"
+          data-expand-grid
+        >
+          <HotelCard
+            v-for="h in hotels"
+            :key="h.hotelId"
+            :data-hotel-id="h.hotelId"
+            :hotel="h"
+            :dates="query.dates"
+            :expanded="expandedId === h.hotelId"
+            @open="!filterAnimating && !searching && expand(h.hotelId, $event)"
+            @close="collapse"
+          />
         </div>
-      </transition>
+        <el-empty v-if="!hotels.length && !filterAnimating" description="没有符合条件的酒店" />
+      </div>
     </div>
   </div>
 </template>
@@ -129,31 +159,9 @@ onMounted(async () => {
   white-space: nowrap;
 }
 
-/* 搜索结果转场舞台：离场网格绝对定位叠在原位，与入场网格交叉过渡 */
+/* 搜索结果转场舞台：过滤动画期间锁定高度，避免 ghost 滑动时页面跳动 */
 .result-stage {
   position: relative;
-}
-
-.result-enter-active,
-.result-leave-active {
-  transition: transform 0.4s var(--motion-easing), opacity 0.4s var(--motion-easing);
-}
-
-.result-leave-active {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-}
-
-.result-enter-from {
-  opacity: 0;
-  transform: translateY(24px);
-}
-
-.result-leave-to {
-  opacity: 0;
-  transform: translateY(-24px);
 }
 
 .hotel-grid {
@@ -161,6 +169,11 @@ onMounted(async () => {
   grid-template-columns: repeat(1, minmax(0, 1fr));
   gap: 1.2rem;
   align-items: stretch;
+}
+
+.hotel-grid.is-filtering {
+  visibility: hidden;
+  pointer-events: none;
 }
 
 @media (min-width: 860px) {
